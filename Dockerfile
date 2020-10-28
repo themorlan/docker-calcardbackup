@@ -1,6 +1,5 @@
 # Introducing a variable to get the arch specific base image. The var is defined by --build-arg in the docker build command.
-ARG IMAGE_ARCH
-FROM ${IMAGE_ARCH}
+FROM alpine:3.12
 
 # Dockerfile Maintainer
 MAINTAINER Jan Wagner "waja@cyconet.org"
@@ -10,7 +9,6 @@ ARG BUILD_VERSION
 ARG VCS_URL
 ARG VCS_REF
 ARG VCS_BRANCH
-ARG QEMU_ARCH
 
 ENV GIT_PROJECT=BernieO/calcardbackup
 
@@ -26,8 +24,7 @@ LABEL org.label-schema.name="calcardbackup - ownCloud/Nextcloud backup tool" \
     org.label-schema.vcs-branch="${VCS_BRANCH:-unknown}"
 
 # The file is needed to emulate the different arches. Copying and removing the README.md is a neccessary workaround, because the qemu file is not present in the amd64 build. If there is no other file present, the COPY command will fail.
-COPY README.md qemu-${QEMU_ARCH}-static* /usr/bin/ 
-RUN rm -f /usr/bin/README.md
+
 COPY ["run.sh", "/"]
 
 RUN apk --no-cache update && apk --no-cache upgrade && \
